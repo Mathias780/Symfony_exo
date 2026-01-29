@@ -6,6 +6,35 @@
 <main>
     <div class="filter">
       {# --VOTRE FORMULAIRE DE FILTRE ICI-- #}
+        <form method="get">
+            <input type="number" name="puissance" placeholder="Puissance min">
+
+            <select name="race">
+                <option value="">-- race --</option>
+                <option value="Humain">Humain</option>
+                <option value="Elf">Elf</option>
+                <option value="Nain">Nain</option>
+                <option value="Géant">Géant</option>
+                <option value="Orc">Orc</option>
+                <option value="Homme-poisson">Homme-poisson</option>
+                <option value="Cosmocat">Cosmocat</option>
+                <option value="Mutant">Mutant</option>
+            </select>
+
+             <select name="classe">
+                <option value="">-- classe --</option>
+                <option value="Mêlée">Mêlée</option>
+                <option value="Mage">Mage</option>
+                <option value="Archer">Archer</option>
+                <option value="Protecteur">Protecteur</option>
+                <option value="Soutient">Soutient</option>
+                <option value="Puissant">Puissant</option>
+                <option value="Agile">Agile</option>
+            </select>
+
+            <button type="submit">Filtrer</button>
+        </form>
+
     </div>
     
     <section id="survivants" >

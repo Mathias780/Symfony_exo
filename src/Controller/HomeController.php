@@ -3,22 +3,26 @@
 namespace App\Controller;
 
 use App\Repository\SurvivantRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-final class HomeController extends AbstractController
+class HomeController extends AbstractController
 {
-
     #[Route('/', name: 'app_home')]
-    public function index(SurvivantRepository $repository, Request $request): Response
+    public function index(Request $request, SurvivantRepository $repo): Response
     {
-        //recuperation de la requête GET qu'on stocke dans $filter
-        $filter = $request->get('filter','all');
-        
-        $survivants = $repository->findAll();
+        $filter = $request->query->get('filter');
+
+        $survivants = match ($filter) {
+            'za' => $repo->findByNameDesc(),
+            'nain' => $repo->findNains(),
+            'elf25' => $repo->findElfPuissanceMin(25),
+            'archer_non_humain' => $repo->findArcherNonHumain(),
+            default => $repo->findAll(),
+        };
+
         return $this->render('home/index.html.twig', [
             'survivants' => $survivants,
         ]);

@@ -4,11 +4,11 @@
 
 {% block body %}
 <div class="filter">
-    <a href={{path('app_home')}}>defaut</a>
-    <a href={{path('app_home' , {'filter': 'asc'} )}}>Z-A</a>
-    <a href={{path('app_home')}}>Nain</a>
-    <a href={{path('app_home')}}>Elf>=25</a>
-    <a href={{path('app_home')}}>Non Humain</a>
+    <a href="{{ path('app_home') }}">Défaut</a>
+    <a href="{{ path('app_home', { filter: 'za' }) }}">Z-A</a>
+    <a href="{{ path('app_home', { filter: 'nain' }) }}">Nain</a>
+    <a href="{{ path('app_home', { filter: 'elf25' }) }}">ELF > 25</a>
+    <a href="{{ path('app_home', { filter: 'archer_non_humain' }) }}">Archer non humain</a>
 </div>
 <main>
 

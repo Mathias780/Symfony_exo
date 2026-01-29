@@ -6,9 +6,6 @@ use App\Entity\Survivant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Survivant>
- */
 class SurvivantRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,30 +13,102 @@ class SurvivantRepository extends ServiceEntityRepository
         parent::__construct($registry, Survivant::class);
     }
 
-    //    /**
-    //     * @return Survivant[] Returns an array of Survivant objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Z–A : ordre alphabétique inverse
+     */
+    public function findByNameDesc(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.nom', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Survivant
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Tous les nains
+     */
+    public function findNains(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.race', 'r')
+            ->where('r.race_name = :race')
+            ->setParameter('race', 'Nain')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Elf avec puissance >= X
+     */
+    public function findElfPuissanceMin(int $min): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.race', 'r')
+            ->where('r.race_name = :race')
+            ->andWhere('s.puissance >= :min')
+            ->setParameter('race', 'Elf')
+            ->setParameter('min', $min)
+            ->getQuery()
+            ->getResult();
+    }
 
 
+
+    public function findArcherNonHumain(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.classe', 'c')
+            ->join('s.race', 'r')
+            ->where('c.class_name = :classe')
+            ->andWhere('r.race_name != :race')
+            ->setParameter('classe', 'Archer')
+            ->setParameter('race', 'Humain')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    /**
+     * Filtres via formulaire
+     */
+    public function filterByForm(
+        ?int $puissance,
+        ?string $race,
+        ?string $classe
+    ): array {
+        $qb = $this->createQueryBuilder('s')
+            ->join('s.race', 'r')
+            ->join('s.classe', 'c');
+
+        if ($puissance !== null) {
+            $qb->andWhere('s.puissance >= :p')
+               ->setParameter('p', $puissance);
+        }
+
+        if ($race) {
+            $qb->andWhere('r.race_name = :race')
+               ->setParameter('race', $race);
+        }
+
+        if ($classe) {
+            $qb->andWhere('c.class_name = :classe')
+               ->setParameter('classe', $classe);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    /**
+     * Puissance cumulée par race
+     */
+    public function getPowerByRace(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('r.race_name AS race, SUM(s.puissance) AS total')
+            ->join('s.race', 'r')
+            ->groupBy('r.race_name')
+            ->getQuery()
+            ->getResult();
+    }
 }

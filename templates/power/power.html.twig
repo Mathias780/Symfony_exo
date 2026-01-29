@@ -3,6 +3,13 @@
 {% block title %}{% endblock %}
 
 {% block body %}
-<h1>Puissance de chaque race</h1>
+<h1>Puissance par race</h1>
+
+<ul>
+{% for row in powers %}
+    <li>{{ row.race }} : {{ row.total }}</li>
+{% endfor %}
+</ul>
+
    
 {% endblock %}
